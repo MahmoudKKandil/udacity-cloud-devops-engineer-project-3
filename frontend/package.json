@@ -92,6 +92,8 @@
     "react-datepicker": "^2.8.0",
     "react-dom": "^16.8.6",
     "react-foundation": "^0.9.6",
+    "node-fetch": "^2.6.1",
+    "minimatch": "^5.1.0",
     "react-gravatar": "^2.6.3",
     "react-loading": "^2.0.3",
     "react-redux": "^5.1.1",

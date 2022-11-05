@@ -68,6 +68,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
+      - restore_cache:
+          keys: [frontend-deps]
       - run:
           name: Check Frontend against security vulnerabilities
           working_directory: ./frontend

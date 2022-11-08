@@ -127,10 +127,9 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: circleci/base:latest
+      - image: amazon/aws-cli:latest
     steps:
       - checkout
-      - install_awscli
       - run:
           name: Ensure back-end infrastructure exists
           command: |

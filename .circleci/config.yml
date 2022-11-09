@@ -188,6 +188,7 @@ jobs:
           name: Configure server
           command: |
             cat .circleci/ansible/inventory.txt
+            export host_key_checking = False
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment
 

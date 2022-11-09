@@ -167,7 +167,7 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - /root/project/circleci/ansible/inventory.txt
+            - .circleci/ansible/inventory.txt
       # Here's where you will add some code to rollback on failure
       - destroy-environment
 
@@ -180,7 +180,7 @@ jobs:
           fingerprints:
             - "3d:9e:44:36:10:06:07:c2:6f:40:e2:94:00:fe:ee:ec"
       - attach_workspace:
-          at: ~/
+          at: .
       - run:
           name: Install dependencies
           command: |

@@ -162,6 +162,7 @@ jobs:
               --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
+            pwd
       - persist_to_workspace:
           root: .
           paths:
@@ -188,6 +189,7 @@ jobs:
           name: Configure server
           command: |
             cat .circleci/ansible/inventory.txt
+            pwd
             ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       - destroy-environment
 

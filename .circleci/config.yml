@@ -66,9 +66,10 @@ commands:
 jobs:
   build-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - restore_cache:
           keys: [frontend-deps]
       - run:
@@ -83,9 +84,10 @@ jobs:
 
   build-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - restore_cache:
           keys: [backend-deps]
       - run:
@@ -100,9 +102,10 @@ jobs:
 
   test-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - restore_cache:
           keys: [frontend-deps]
       - run:
@@ -114,9 +117,10 @@ jobs:
 
   test-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - restore_cache:
           keys: [backend-deps]
       - run:
@@ -128,9 +132,10 @@ jobs:
 
   scan-frontend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - restore_cache:
           keys: [frontend-deps]
       - run:
@@ -143,9 +148,10 @@ jobs:
 
   scan-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - restore_cache:
           keys: [backend-deps]
       - run:
@@ -157,11 +163,61 @@ jobs:
             npm audit fix --force 
             npm audit --audit-level=critical
 
-  deploy-infrastructure:
+  deploy-frontend:
     docker:
-      - image: amazon/aws-cli:latest
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_awscli
+      - install_nodejs
+      - restore_cache:
+          keys: [frontend-deps]
+      - run:
+          name: Install dependencies
+          command: |
+            cd frontend
+            npm install
+      - run:
+          name: Get backend url
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 desribe-instances \
+            -- filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
+            echo "${API_URL}"
+            cat frontend/.env
+      - run:
+          name: Deploy frontend objects
+          command: |
+            cd frontend
+            npm run build
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}  -r
+      - destroy-environment
+      - revert-migrations
+
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      -
+      - run:
+          name: Install dependencies
+          command: |
+            # your code here
+      - run:
+          name: Deploy backend
+          command: |
+            # your code here
+
+  deploy-infrastructure:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
       - run:
           name: Install tar utility
           command: |
@@ -195,14 +251,14 @@ jobs:
           root: .
           paths:
             - .circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure
       - destroy-environment
 
   run-migrations:
     docker:
-      - image: cimg/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install_nodejs
       - run:
           name: Run migrations
           command: |
@@ -269,3 +325,5 @@ workflows:
           requires: [deploy-infrastructure]
       - run-migrations:
           requires: [configure-infrastructure]
+      - deploy-frontend:
+          requires: [run-migrations]

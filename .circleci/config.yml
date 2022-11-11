@@ -203,7 +203,7 @@ jobs:
     steps:
       - checkout
       - install_awscli
-      - isntall_nodejs
+      - install_nodejs
       - install_ansible
       - add_ssh_keys:
           fingerprints: ["3d:9e:44:36:10:06:07:c2:6f:40:e2:94:00:fe:ee:ec"]

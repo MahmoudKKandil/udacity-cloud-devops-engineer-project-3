@@ -193,7 +193,7 @@ jobs:
           command: |
             cd frontend
             npm run build
-            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}  -r
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}  --recursive
       - destroy-environment
       - revert-migrations
 
@@ -206,7 +206,8 @@ jobs:
       - install_nodejs
       - install_ansible
       - add_ssh_keys:
-          fingerprints: ["3d:9e:44:36:10:06:07:c2:6f:40:e2:94:00:fe:ee:ec"]
+          fingerprints:
+            - "3d:9e:44:36:10:06:07:c2:6f:40:e2:94:00:fe:ee:ec"
       - attach_workspace:
           at: .
       - run:

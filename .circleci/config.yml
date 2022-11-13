@@ -185,7 +185,7 @@ jobs:
             --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text)
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL=http://${BACKEND_IP}:3030" >> frontend/.env
+            echo $BACKEND_IP >> .circleci/ansible/inventory.txt
             echo "${API_URL}"
             cat frontend/.env
       - run:
@@ -233,6 +233,12 @@ jobs:
             export TYPEORM_MIGRAIONS=./migrations/*.ts
 
             cd .circleci/ansible
+            BACKEND_IP=$(aws ec2 describe-instances \
+            --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --output text)
+            export API_URL="http://${BACKEND_IP}:3030"
+            echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat inventory.txt
             pwd
             ansible-playbook -i inventory.txt configure-server.yml
@@ -307,7 +313,6 @@ jobs:
       - image: cimg/base:stable
     steps:
       - checkout
-      - install_awscli
       - add_ssh_keys:
           fingerprints:
             - "3d:9e:44:36:10:06:07:c2:6f:40:e2:94:00:fe:ee:ec"
@@ -321,12 +326,6 @@ jobs:
       - run:
           name: Configure server
           command: |
-            cat .circleci/ansible/inventory.txt
-            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text)
-            echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
             pwd
             export HOST_KEY_CHECKING=false

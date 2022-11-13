@@ -41,7 +41,7 @@ commands:
           name: Destroy environments
           when: on_fail
           command: |
-            aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive
+            aws s3 rm s3://udapeople-<<parameters.Workflow_ID>> --recursive --force
             aws cloudformation delete-stack --stack-name udapeople-backend-<<parameters.Workflow_ID>>
             aws cloudformation delete-stack --stack-name udapeople-frontend-<<parameters.Workflow_ID>>
   revert-migrations:
@@ -280,6 +280,7 @@ jobs:
               --output text)
             echo $BACKEND_PUBLIC_IP >> .circleci/ansible/inventory.txt
             cat .circleci/ansible/inventory.txt
+            pwd
       - persist_to_workspace:
           root: .
           paths:

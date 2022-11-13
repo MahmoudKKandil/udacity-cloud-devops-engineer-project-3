@@ -241,7 +241,7 @@ jobs:
             echo $BACKEND_IP >> inventory.txt
             cat inventory.txt
             pwd
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i inventory.txt deploy-backend.yml
       - destroy-environment
       - revert-migrations
 

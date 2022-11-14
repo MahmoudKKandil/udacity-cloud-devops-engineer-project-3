@@ -389,6 +389,7 @@ jobs:
               --template-file cloudfront.yaml \
               --stack-name InitialStack \
               --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}" 
+            echo "Current Workflow ID: ${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
 

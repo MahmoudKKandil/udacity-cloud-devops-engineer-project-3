@@ -316,7 +316,7 @@ jobs:
             fi
       - destroy-environment
       - revert-migrations
-      
+
   run-migrations:
     docker:
       - image: cimg/base:stable

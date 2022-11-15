@@ -407,13 +407,13 @@ jobs:
             echo "Stack Names ${STACKS[@]}"
             export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
             echo "Old Workflow ID $OldWorkflowID"
-            if [["${STACKS[@]}" =~ "$OldWorkflowID"]]
+            if [["${STACKS[@]}" =~ "${OldWorkflowID}"]]
             then
-              aws s3 rm s3://udapeople-$OldWorkflowID --recursive
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
               echo 1
-              aws cloudformation delete-stack --stack-name udapeople-backend-$OldWorkflowID
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
               echo 2
-              aws cloudformation delete-stack --stack-name udapeople-frontend-$OldWorkflowID
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
             fi
           environment:
             TERM: xterm-256color
